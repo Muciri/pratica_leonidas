@@ -42,12 +42,13 @@ while True:
         msg_status = dados.decode().split('\n')[0]
         dados = dados[len(msg_status)+1:]
         print(msg_status)
+        msg_status = msg_status.split()
         cmd = cmd.split()
         cmd[0] = cmd[0].upper()
         if cmd[0] == 'QUIT':
             break
         elif cmd[0] == 'LIST':
-            num_arquivos = int(msg_status.split()[1])
+            num_arquivos = int(msg_status[1])
             dados = dados.decode()
             while True:
                 arquivos = dados.split('\n')
@@ -60,19 +61,20 @@ while True:
                 if not dados: break
                 dados = residual + dados.decode()
         elif cmd[0] == 'GET':
-            nome_arq = " ".join(cmd[1:])
-            msg_status = msg_status.split()
-            if(msg_status[0 == '+OK']):
-                print('Recebendo:', nome_arq)
-                arq = open(nome_arq, "wb")
-                tam_arquivo = msg_status[1]
-                while True:
-                    arq.write(dados)
-                    tam_arquivo -= len(dados)
-                    if tam_arquivo == 0: break
-                    dados = sock.recv(TAM_MSG)
-                    if not dados: break
-                arq.close()
+            if msg_status[0] == '+OK':
+                nome_arq = " ".join(cmd[1:])
+                msg_status = msg_status.split()
+                if(msg_status[0 == '+OK']):
+                    print('Recebendo:', nome_arq)
+                    arq = open(nome_arq, "wb")
+                    tam_arquivo = msg_status[1]
+                    while True:
+                        arq.write(dados)
+                        tam_arquivo -= len(dados)
+                        if tam_arquivo == 0: break
+                        dados = sock.recv(TAM_MSG)
+                        if not dados: break
+                    arq.close()
         elif cmd[0] == 'CWD':
             if msg_status.startswith('+'):
                 print('mudança de diretório bem sucedida')
